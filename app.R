@@ -685,11 +685,11 @@ server <- function(input, output) {
     # Cuanto falta o sobra de facturación
     output$faltaFacturacion <- renderValueBox({
         valueBox(
-            subtitle = ifelse(faltaFactura <= (0.9*factura),"Por conseguir",ifelse(faltaFactura <= factura,"Falta poco", "Meta superada por")), 
+            subtitle = ifelse(faltaFactura < 0 & abs(faltaFactura)<= (0.9*factura),"Por conseguir",ifelse(faltaFactura < 0 & abs(faltaFactura)<= factura,"Falta poco", "Meta superada por")), 
             value = tags$p(paste0(abs(faltaFactura)," €"),style="font-size: 100%;"), 
             icon = icon("euro-sign"), 
             #fill = TRUE,
-            color = ifelse(faltaFactura <= (0.9*factura),"red",ifelse(faltaFactura <= factura,"yellow", "green"))
+            color = ifelse(faltaFactura < 0 & abs(faltaFactura)<= (0.9*factura),"red",ifelse(faltaFactura < 0 & abs(faltaFactura)<= factura,"yellow", "green"))
         )
     })
     # Facturación Previous Year
@@ -724,11 +724,11 @@ server <- function(input, output) {
     # Cuanto falta o sobra de clientes
     output$faltaClientes <- renderInfoBox({
          infoBox(
-             ifelse(abs(faltaClientes) <= (0.75*objetivoClientes),"Por conseguir:",ifelse(abs(faltaClientes) <= objetivoClientes,"Falta poco:", "Meta superada por:")),
+             ifelse(faltaClientes < 0 & abs(faltaClientes) <= (0.75*objetivoClientes),"Por conseguir:",ifelse(faltaClientes < 0 & abs(faltaClientes) <= objetivoClientes,"Falta poco:", "Meta superada por:")),
              value = tags$p(abs(faltaClientes), style = "font-size: 200%;"),  
-             icon = icon(ifelse(abs(faltaClientes) <= (0.75*objetivoClientes),"exclamation-triangle",ifelse(abs(faltaClientes) <= objetivoClientes,"thumbs-down", "certificate"))),
+             icon = icon(ifelse(faltaClientes < 0 & abs(faltaClientes) <= (0.75*objetivoClientes),"exclamation-triangle",ifelse(faltaClientes < 0 & abs(faltaClientes) <= objetivoClientes,"thumbs-down", "certificate"))),
              fill = TRUE,
-             color = ifelse(abs(faltaClientes) <= (0.75*objetivoClientes),"red",ifelse(abs(faltaClientes) <= objetivoClientes,"yellow", "green"))
+             color = ifelse(faltaClientes < 0 & abs(faltaClientes) <= (0.75*objetivoClientes),"red",ifelse(faltaClientes < 0 & abs(faltaClientes) <= objetivoClientes,"yellow", "green"))
          )
     })
     # Objetivo número de contratos
@@ -744,11 +744,11 @@ server <- function(input, output) {
     # Cuanto falta o sobra de contratos
     output$faltaContratos <- renderInfoBox({
         infoBox(
-            ifelse(abs(faltaContratos) <= (0.75*objetivoContratos),"Por conseguir:",ifelse(abs(faltaContratos) <= objetivoContratos,"Falta poco:", "Meta superada por:")), 
+            ifelse(faltaContratos < 0 & abs(faltaContratos) <= (0.75*objetivoContratos),"Por conseguir:",ifelse(faltaContratos < 0 & abs(faltaContratos) <= objetivoContratos,"Falta poco:", "Meta superada por:")), 
             value = tags$p(abs(faltaContratos), style = "font-size: 200%;"), 
-            icon = icon(ifelse(abs(faltaContratos) <= (0.75*objetivoContratos),"exclamation-triangle",ifelse(abs(faltaContratos) <= objetivoContratos,"thumbs-down", "certificate"))),
+            icon = icon(ifelse(faltaContratos < 0 & abs(faltaContratos) <= (0.75*objetivoContratos),"exclamation-triangle",ifelse(faltaContratos < 0 & abs(faltaContratos) <= objetivoContratos,"thumbs-down", "certificate"))),
             fill = TRUE,
-            color = ifelse(abs(faltaContratos) <= (0.75*objetivoContratos),"red",ifelse(abs(faltaContratos) <= objetivoContratos,"yellow", "green"))
+            color = ifelse(faltaContratos < 0 & abs(faltaContratos) <= (0.75*objetivoContratos),"red",ifelse(faltaContratos < 0 & abs(faltaContratos) <= objetivoContratos,"yellow", "green"))
         )
     })
     # Forma de las horas trabajadas. id="form".
