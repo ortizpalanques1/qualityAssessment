@@ -35,12 +35,12 @@ cargador <- function(x,y){
                       databaseName))
 }
 #Etiqueta ls campos obligatorios en la forma de horas trabajadas
-# labelMandatory <- function(label){
-#   tagList(
-#     label,
-#     span("*", class="mandatory_star")
-#   )
-# }
+labelMandatory <- function(label){
+  tagList(
+    label,
+    span("*", class="mandatory_star")
+  )
+}
 #Value Box Special
 valueBox2 <- function(value, title, subtitle, icon = NULL, color = "aqua", width = 4, href = NULL){
   
