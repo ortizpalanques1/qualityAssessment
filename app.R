@@ -5,6 +5,7 @@ library(shinydashboard)
 library(tidyverse)
 library(shinyjs)
 library(stringr)
+#####APLICACIÓN PARA OBSERVAR VARIABLES DE MULTILIMPIEZAS#####
 options(scipen = 999)
 ## CSS
 appCSS <- ".mandatory_star { color:red; }"
