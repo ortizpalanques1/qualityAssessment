@@ -69,17 +69,16 @@ valueBox2 <- function(value, title, subtitle, icon = NULL, color = "aqua", width
     boxContent
   )
 }
-#Evaluación de objetivos en tab Comercial 
-evalua <- function(evaluado, evaluador,nivelCritico){
-  ifelse(evaluado < 0 & abs(evaluado)<= (nivelCritico*evaluador),"Por conseguir",ifelse(evaluado < 0 & abs(evaluado)<= evaluador,"Falta poco", "Meta superada por"))
-}
-#Evaluación de objetivos con color en tab Comercial
-evaluaColor <- function(evaluado, evaluador,nivelCritico){
-  ifelse(evaluado < 0 & abs(evaluado)<= (nivelCritico*evaluador),"red",ifelse(evaluado < 0 & abs(evaluado)<= evaluador,"yellow", "green"))
-}
-#Evaluación de objetivos con ícono
-evaluaIcon <- function(evaluado, evaluador,nivelCritico){
-  ifelse(evaluado < 0 & abs(evaluado) <= (nivelCritico*evaluador),"exclamation-triangle",ifelse(evaluado < 0 & abs(evaluado) <= evaluador,"thumbs-down", "certificate"))
+#Evaluación de objetivos en tab Comercial: en "tipo", usar "texto", "color" o "icon" según lo que pida el código
+evalua <- function(tipo,evaluado, evaluador,nivelCritico){
+  if (tipo == "texto"){
+    ifelse(evaluado < 0 & abs(evaluado)<= (nivelCritico*evaluador),"Por conseguir",ifelse(evaluado < 0 & abs(evaluado)<= evaluador,"Falta poco", "Meta superada por"))
+  } else if (tipo == "color"){
+    ifelse(evaluado < 0 & abs(evaluado)<= (nivelCritico*evaluador),"red",ifelse(evaluado < 0 & abs(evaluado)<= evaluador,"yellow", "green"))
+  } else {
+    ifelse(evaluado < 0 & abs(evaluado) <= (nivelCritico*evaluador),"exclamation-triangle",ifelse(evaluado < 0 & abs(evaluado) <= evaluador,"thumbs-down", "certificate"))
+  }
+  
 }
 ##Procesamiento de datos
 #Creación del dataframe para el gráfico Satisfaccion Trabajadores
@@ -698,11 +697,11 @@ server <- function(input, output) {
     # Cuanto falta o sobra de facturación
     output$faltaFacturacion <- renderValueBox({
         valueBox(
-            subtitle = evalua(faltaFactura,factura,0.9),
+            subtitle = evalua("texto",faltaFactura,factura,0.9),
             value = tags$p(paste0(abs(faltaFactura)," €"),style="font-size: 100%;"), 
             icon = icon("euro-sign"), 
             #fill = TRUE,
-            color = evaluaColor(faltaFactura,factura,0.9)
+            color = evalua("color",faltaFactura,factura,0.9)
         )
     })
     # Facturación Previous Year
@@ -737,11 +736,11 @@ server <- function(input, output) {
     # Cuanto falta o sobra de clientes
     output$faltaClientes <- renderInfoBox({
          infoBox(
-             evalua(faltaClientes,objetivoClientes,0.75),
+             evalua("texto",faltaClientes,objetivoClientes,0.75),
              value = tags$p(abs(faltaClientes), style = "font-size: 200%;"),  
              icon = icon(ifelse(faltaClientes < 0 & abs(faltaClientes) <= (0.75*objetivoClientes),"exclamation-triangle",ifelse(faltaClientes < 0 & abs(faltaClientes) <= objetivoClientes,"thumbs-down", "certificate"))),
              fill = TRUE,
-             color = evaluaColor(faltaClientes,objetivoClientes,0.75)
+             color = evalua("color",faltaClientes,objetivoClientes,0.75)
          )
     })
     # Objetivo número de contratos
@@ -757,11 +756,11 @@ server <- function(input, output) {
     # Cuanto falta o sobra de contratos
     output$faltaContratos <- renderInfoBox({
         infoBox(
-            evalua(faltaContratos,objetivoContratos,0.75),
+            evalua("texto",faltaContratos,objetivoContratos,0.75),
             value = tags$p(abs(faltaContratos), style = "font-size: 200%;"), 
-            icon = icon(ifelse(faltaContratos < 0 & abs(faltaContratos) <= (0.75*objetivoContratos),"exclamation-triangle",ifelse(faltaContratos < 0 & abs(faltaContratos) <= objetivoContratos,"thumbs-down", "certificate"))),
+            icon = icon(evalua("icon",faltaContratos,objetivoContratos,0.75)),
             fill = TRUE,
-            color = evaluaColor(faltaContratos,objetivoContratos,0.75)
+            color = evalua("color",faltaContratos,objetivoContratos,0.75)
         )
     })
     # Forma de las horas trabajadas. id="form".
