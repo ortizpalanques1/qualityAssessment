@@ -78,23 +78,24 @@ evalua <- function(tipo,evaluado, evaluador,nivelCritico){
   } else {
     ifelse(evaluado < 0 & abs(evaluado) <= (nivelCritico*evaluador),"exclamation-triangle",ifelse(evaluado < 0 & abs(evaluado) <= evaluador,"thumbs-down", "certificate"))
   }
-  
 }
 ##Procesamiento de datos
 #Creación del dataframe para el gráfico Satisfaccion Trabajadores
-cargador("ISO","encuestaTrabajadores")
+cargador("ISO","encuestaTrabajadoresReal")
 satisfaccionTrabajadores <- db$find()
 cargador("ISO","itemsEncuestaTrabajadores")
 itemsEncuestaTrabajadores <- db$find()
-satisfaccionTrabajadores <- satisfaccionTrabajadores %>% 
-    filter(Ciclo==max(Ciclo) || Ciclo == (max(Ciclo)-1)) %>% 
-    pivot_longer(cols = starts_with("P_"),names_to="pregunta", values_to="valor") %>% 
-    left_join(., itemsEncuestaTrabajadores[c("Dimension", "Key")], by=c("pregunta"="Key")) %>% 
-    group_by(Ciclo,Dimension) %>% 
-    summarise(promedio=round(mean(valor, na.rm=TRUE),2)) 
+satisfaccionTrabajadores[satisfaccionTrabajadores==99] <- NA
+satisfaccionTrabajadores <- satisfaccionTrabajadores %>%
+  filter(Year==max(Year) || Year == (max(Year)-1)) %>%
+  pivot_longer(cols = starts_with("P_"),names_to="pregunta", values_to="valor") %>%
+  mutate(valor = as.numeric(valor)) %>% 
+  left_join(., itemsEncuestaTrabajadores[c("Dimension", "Key")], by=c("pregunta"="Key")) %>% 
+  group_by(Year,Dimension)%>% 
+  summarise(promedio=round(mean(valor, na.rm=TRUE),2)) 
 #Obtener diferencia total de la encuesta
 diferenciaSatisfaccionTrabajadores <- satisfaccionTrabajadores %>%
-    group_by(Ciclo) %>% 
+    group_by(Year) %>% 
     summarise(Promedio=round(mean(promedio,na.rm = TRUE),2)) 
 diferenciaFinalT <- round(diferenciaSatisfaccionTrabajadores$Promedio[2]-diferenciaSatisfaccionTrabajadores$Promedio[1],2)
 promedioFinalTrabajador <- round(diferenciaSatisfaccionTrabajadores$Promedio[2],2)
@@ -322,7 +323,7 @@ ui <- dashboardPage(title = "Multilimpiezas",
                         column(width = 6,
                                #Satisfacción trabajadores
                                box(
-                                   title = "Satisfacción de los trabajadores (SIMULACIÓN)",
+                                   title = "Satisfacción de los trabajadores",
                                     status = "primary",
                                     solidHeader = FALSE,
                                     width = NULL,
@@ -351,7 +352,7 @@ ui <- dashboardPage(title = "Multilimpiezas",
                     column(width = 6,
                            fluidRow(
                                box(
-                                   title = "Evolución de la facturación (SIMULACIÓN)",
+                                   title = "Evolución de la facturación",
                                    status = "primary",
                                    solidHeader = TRUE,
                                    width = 12,
@@ -372,7 +373,7 @@ ui <- dashboardPage(title = "Multilimpiezas",
                            fluidRow(
                                #Importe facturación
                                box(
-                                   title = "Evolución de los clientes y contratos (SIMULACIÓN)",
+                                   title = "Evolución de los clientes y contratos",
                                    status = "primary",
                                    solidHeader = TRUE,
                                    width = 12,
@@ -560,7 +561,7 @@ server <- function(input, output) {
     })
     #Satisfacción Trabajadores
     output$satisfaccionTrabajadores <- renderPlot({
-        graficoSatisfaccionTrabajadores <- ggplot(satisfaccionTrabajadores,aes(x=Dimension, y=promedio, label = promedio, fill=factor(Ciclo)))+
+        graficoSatisfaccionTrabajadores <- ggplot(satisfaccionTrabajadores,aes(x=Dimension, y=promedio, label = promedio, fill=factor(Year)))+
             geom_bar(stat="identity", position=position_dodge())+
             geom_text(aes(y=0.5),vjust=0.5, color="white",
                       position = position_dodge(0.9), size=3.5)+
