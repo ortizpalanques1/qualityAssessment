@@ -24,6 +24,14 @@ fieldsAll <- c("provincia", "annually")
 ##Funciones
 #Cargar mongodb
 source(file="opcionesMongoDB.R", local=T)[1]
+# What is in "opcionesMongoDB.R":
+# list(   
+#   options(mongodb = list(
+#     "host" = "xxx.xxxxx.mongodb.net",
+#     "username" = "xxxxxxxxxx",
+#     "password" = "xxxxxxxxxxxx"
+#   ))
+# )
 cargador <- function(x,y){
     databaseName <- x
     collectionName <- y
